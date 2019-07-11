@@ -3,7 +3,7 @@ from astropy.stats import sigma_clipped_stats
 from photutils import DAOStarFinder
 import matplotlib.pyplot as plt
 from astropy.visualization import SqrtStretch
-from astropy.visualization.mpl_normalize import ImageNormalize
+from astropy.visualization import ImageNormalize
 from photutils import CircularAperture
 
 
@@ -35,8 +35,8 @@ class astrometry:
 
         if (plot):
             apertures = CircularAperture(self.pixel_positions, r=4)
-            #norm = ImageNormalize(stretch=SqrtStretch())
-            plt.imshow(self.data,cmap='Greys',origin='lower')
+            norm = ImageNormalize(stretch=SqrtStretch())
+            plt.imshow(self.data,cmap='Greys',origin='lower',norm=norm)
             apertures.plot(color='blue',lw=1.5,alpha=0.5)
 
         self.wcs_orig = wcs.WCS(self.header)
@@ -54,7 +54,7 @@ class astrometry:
             ref_aper.plot(color='red',lw=1.5,alpha=0.5)
             plt.show()
 
-    def match_and_filter(self,exclusion=None,tol=3/3600.):
+    def match_and_filter(self,exclusion=None,tol=3/3600.,plot=True):
         '''
 
         :param exclusion: if None, no prefiltering is done. If equal to a distance, ensures that the minimum distance between
@@ -76,6 +76,19 @@ class astrometry:
         self.ypix_ref = self.ypix_ref[idx2]
 
         self.distances = ds
+
+        if (plot):
+
+            plt.close()
+            apertures = CircularAperture((self.xpix_orig,self.ypix_orig), r=4)
+            ref_apertures = CircularAperture((self.xpix_ref,self.ypix_ref), r=4)
+            norm = ImageNormalize(stretch=SqrtStretch())
+            plt.imshow(self.data,cmap='Greys',origin='lower',norm=norm)
+            apertures.plot(color='blue',lw=1.5,alpha=0.5)
+            ref_apertures.plot(color='red',lw=1.5,alpha=0.5)
+            plt.show()
+
+
 
 
 
