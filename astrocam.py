@@ -63,6 +63,17 @@ class astrometry:
         :return:
         '''
 
+        if (exclusion is not None):
+            # Performing pre-filtering on reference catalog star list. Make sure we keep only stars more distant than
+            # exclusion value from each other
+            idx1, idx2, ds = spherematch(self.ra_ref,self.dec_ref,self.ra_ref,self.dec_ref,nnearest=2)
+            # Now exclude one of the stars from each pair where distance is smaller than exclusion
+            ou = np.where((idx2>idx1) * (ds > exclusion))
+            self.ra_ref = self.ra_ref[ou]
+            self.dec_ref = self.dec_ref[ou]
+            self.xpix_ref = self.xpix_ref[ou]
+            self.ypix_ref = self.ypix_ref[ou]
+
         idx1, idx2, ds = spherematch(self.ra_orig,self.dec_orig,self.ra_ref,self.dec_ref,nnearest=1,tol=tol)
         self.ra_orig = self.ra_orig[idx1]
         self.xpix_orig = self.xpix_orig[idx1]
