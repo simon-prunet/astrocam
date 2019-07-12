@@ -16,11 +16,15 @@ from web import query_vizier
 
 class astrometry:
 
-    def __init__(self,hdu,plot=True,num_std=20,max_stars=300):
+    def __init__(self,hdu,plot=True,num_std=20,max_stars=300,query_radius=5.):
 
         '''
 
-        :param hdu: FITS HDU
+        :param hdu:
+        :param plot:
+        :param num_std:
+        :param max_stars:
+        :param query_radius:
         '''
 
         self.data = hdu.data.copy()
@@ -41,7 +45,7 @@ class astrometry:
 
         self.wcs_orig = wcs.WCS(self.header)
         (self.ra_orig, self.dec_orig) = self.wcs_orig.all_pix2world(self.pixel_positions[0],self.pixel_positions[1],0)
-        arr_ref = query_vizier(5.,self.header['CRVAL1'],self.header['CRVAL2'],max_stars=max_stars)
+        arr_ref = query_vizier(query_radius,self.header['CRVAL1'],self.header['CRVAL2'],max_stars=max_stars)
         self.ra_ref = arr_ref[:,0]
         self.dec_ref = arr_ref[:,1]
         self.mag_ref = arr_ref[:,2]
@@ -100,7 +104,15 @@ class astrometry:
             plt.show()
 
 
+    def adjust_wcs(self):
 
+        '''
+        This routine will start from the original astrometric (approximate) solution, and will adjust the astrometric
+        parameters which consist of:
+        1) A pixel space polynomial transform r' = p0 + p1*r + p2*r**2 + p3*r**3. Here p1 will include the plate scale,
+        in
+        :return:
+        '''
 
 
 
