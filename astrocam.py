@@ -227,6 +227,7 @@ def create_linear_wcs(inwcs):
 
 
 def modify_wcs(linwcs, pc1_1, pc1_2, pc2_1, pc2_2, crval1, crval2):
+
     twcs = linwcs.copy()
 
     twcs.wcs.pc[0, 0] = pc1_1
@@ -241,6 +242,7 @@ def modify_wcs(linwcs, pc1_1, pc1_2, pc2_1, pc2_2, crval1, crval2):
 
 
 def pix2sky(params, xpix, ypix, linwcs):
+
     p0 = params[0]
     p2 = params[1]
     p3 = params[2]
@@ -256,6 +258,7 @@ def pix2sky(params, xpix, ypix, linwcs):
 
 
 def residual(params, xpix, ypix, ra_ref, dec_ref, linwcs):
+
     ra, dec = pix2sky(params, xpix, ypix, linwcs)
     n = ra.size
     res = np.zeros(n)
@@ -263,3 +266,23 @@ def residual(params, xpix, ypix, ra_ref, dec_ref, linwcs):
         res[i] = _great_circle_distance(ra[i], dec[i], ra_ref[i], dec_ref[i])
 
     return res
+
+def get_zemaxlike_params(params,linwcs,pixel_scale):
+    '''
+
+    :param params:  First 3 params are p0,p2,p3 from non-linear radial transform
+    :param linwcs: linear wcs instance
+    :param pixel_scale: in mm per pixel
+    :return: Correponding rescaled parameters to transform between radius in mm to angles on the sky
+    '''
+
+    pc = linwcs.wcs.pc
+    det = np.linalg.det(pc)
+    deg_per_mm = np.sqrt(np.abs(det)) / pixel_scale
+
+    p0=params[0]
+    p2=params[1]
+    p3=params[2]
+
+    return np.array([p0*deg_per_mm*pixel_scale, p2*deg_per_mm/pixel_scale, p3*deg_per_mm/pixel_scale**2])
+
