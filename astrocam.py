@@ -222,6 +222,8 @@ def transform(xpix, ypix, p0, p2, p3, linwcs):
 
 def create_linear_wcs(inwcs):
     head = inwcs.to_header()
+    head['NAXIS1'] = inwcs._naxis1
+    head['NAXIS2'] = inwcs._naxis2
     linwcs = wcs.WCS(head)
     return linwcs
 

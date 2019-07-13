@@ -30,6 +30,7 @@ import warnings
 
 SESAME_URL = "http://vizier.cfa.harvard.edu/viz-bin/nph-sesame/-oxp/SNVA?"
 VIZIER_URL = "http://vizier.hia.nrc.ca/viz-bin/"
+#VIZIER_URL = "https://vizier.u-strasbg.fr/viz-bin"
 
 def query_sesame(object_name, verbose=True, degree=False, pm=False):
     """Query the SESAME Database to get RA/DEC given the name of an
